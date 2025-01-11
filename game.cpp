@@ -42,9 +42,9 @@ void moving_car_collision(int key);
 void building_collision(int key);
 void random_placing();
 void obstacle_placing_check(int &x, int &y);
+void overwrite(int &x, int &y);
 void menu();
 void menu_2();
-void game_end();
 void display_score();
 void write_score();
 
@@ -60,19 +60,19 @@ int obs_S_dec; // Different for red and yellow car.
 int car_S_dec;
 int speed;		   // How many pixels the car move in desire position.
 int exit_menu = 0; // A Flag for displaying menu.
-int arr[16] = {-1, -2, -3, -4, -5, -6, -7, -8, -9, -10, -11, -12, -13, -14, -15, -16};
+int arr[16];
 
-int A = 6; // Global Var for random placing of passengers
-int *p = new int[A];
-int he, ho; // 2 variables to randomnly place the passengers desired location.
+int A = 6;			 // Global Var for random placing of passengers
+int *p = new int[A]; // Global pointer for manipulating the number of passengers
+int he, ho;			 // 2 variables to randomnly place the passengers desired location.
 
 // For the random cars.
 int moving_car_timer = 0;
-int a = 328, b = 175;
+int a = 336, b = 175;
 bool flag_1 = true;
 int c = 82, d = 10;
 bool flag_2 = true;
-int e = 525, f = 10;
+int e = 530, f = 10;
 bool flag_3 = true;
 int g = 980, h = 400;
 bool flag_4 = true;
@@ -131,11 +131,6 @@ void GameDisplay() /**/
 	if (exit_menu == 1)
 	{
 		menu_2();
-	}
-
-	if (exit_menu == 4) // When times reaches 3 minutes display your score
-	{
-		game_end();
 	}
 
 	if (exit_menu == 2)
@@ -420,7 +415,9 @@ void Timer(int m)
 void Timmar(int n)
 {
 
-	seconds++;
+	if (exit_menu == 2)
+		seconds++;
+
 	if ((seconds == 60))
 
 	{
@@ -428,16 +425,13 @@ void Timmar(int n)
 		seconds = 0;
 	}
 
-	if ((minutes <= 3) and (score >= 100))
-	{
-		exit_menu = -1;
+	if ((minutes < 3) and (score >= 100))
+
 		write_score();
-	}
-	if (minutes == 3)
-	{
-		exit_menu = 4;
+
+	if ((minutes == 3) and (score < 100))
+
 		write_score();
-	}
 
 	glutTimerFunc(1000.0, Timmar, 0); // 1000 milliseconds = 1 second
 }
@@ -497,15 +491,14 @@ int main(int argc, char *argv[])
 	if (extra == 0)
 	{
 		A = 8;
-		int *p = new int[A];
 	}
 	random_placing();
 	random_passenger();
 
-	// for (int i = 0, j = 1; i == 14; i += 2, j += 2)
-	// {
-	// 	overwrite(arr[i], arr[j]);
-	// }
+	for (int i = 0, j = 1; i == 16; i += 2, j += 2)
+	{
+		overwrite(arr[i], arr[j]);
+	}
 
 	// InitRandomizer();								  // seed the random number generator...
 	glutInit(&argc, argv);						  // initialize the graphics library...
@@ -543,20 +536,24 @@ void random_passenger()
 	*(p + 0) = (rand() % 1200) + 50; // 50-1250
 	*(p + 1) = (rand() % 750) + 50;	 // 50-800
 	obstacle_placing_check(*(p + 0), *(p + 1));
+	overwrite(*(p + 0), *(p + 1));
 
 	*(p + 2) = (rand() % 1200) + 50;
 	*(p + 3) = (rand() % 750) + 50;
 	obstacle_placing_check(*(p + 2), *(p + 3));
+	overwrite(*(p + 2), *(p + 3));
 
 	*(p + 4) = (rand() % 1200) + 50;
 	*(p + 5) = (rand() % 750) + 50;
 	obstacle_placing_check(*(p + 4), *(p + 5));
+	overwrite(*(p + 4), *(p + 5));
 
 	if (A == 8)
 	{
 		*(p + 6) = (rand() % 1200) + 50;
 		*(p + 7) = (rand() % 750) + 50;
 		obstacle_placing_check(*(p + 6), *(p + 7));
+		overwrite(*(p + 6), *(p + 7));
 	}
 }
 
@@ -571,6 +568,7 @@ void passenger_pick(unsigned char key)
 			he = (rand() % 1200) + 50;
 			ho = (rand() % 750) + 50;
 			obstacle_placing_check(he, ho);
+			overwrite(he, ho);
 		}
 	}
 
@@ -583,6 +581,7 @@ void passenger_pick(unsigned char key)
 			he = (rand() % 1200) + 50;
 			ho = (rand() % 750) + 50;
 			obstacle_placing_check(he, ho);
+			overwrite(he, ho);
 		}
 	}
 
@@ -595,6 +594,7 @@ void passenger_pick(unsigned char key)
 			he = (rand() % 1200) + 50;
 			ho = (rand() % 750) + 50;
 			obstacle_placing_check(he, ho);
+			overwrite(he, ho);
 		}
 	}
 
@@ -609,6 +609,7 @@ void passenger_pick(unsigned char key)
 				he = (rand() % 1200) + 50;
 				ho = (rand() % 750) + 50;
 				obstacle_placing_check(he, ho);
+				overwrite(he, ho);
 			}
 		}
 	}
@@ -631,6 +632,7 @@ void passenger_drop(unsigned char key)
 				*(p + 0) = (rand() % 1200) + 50; // 50-1250
 				*(p + 1) = (rand() % 750) + 50;	 // 50-800
 				obstacle_placing_check(*(p + 0), *(p + 1));
+				overwrite(*(p + 0), *(p + 1));
 			}
 
 			if ((*(p + 2) == 1500) and (*(p + 3) = 1500))
@@ -638,6 +640,7 @@ void passenger_drop(unsigned char key)
 				*(p + 2) = (rand() % 1200) + 50; // 50-1250
 				*(p + 3) = (rand() % 750) + 50;	 // 50-800
 				obstacle_placing_check(*(p + 2), *(p + 3));
+				overwrite(*(p + 2), *(p + 3));
 			}
 
 			if ((*(p + 4) == 1500) and (*(p + 5) = 1500))
@@ -645,6 +648,7 @@ void passenger_drop(unsigned char key)
 				*(p + 4) = (rand() % 1200) + 50; // 50-1250
 				*(p + 5) = (rand() % 750) + 50;	 // 50-800
 				obstacle_placing_check(*(p + 4), *(p + 5));
+				overwrite(*(p + 4), *(p + 5));
 			}
 
 			if (A == 8)
@@ -654,6 +658,7 @@ void passenger_drop(unsigned char key)
 					*(p + 6) = (rand() % 1200) + 50; // 50-1250
 					*(p + 7) = (rand() % 750) + 50;	 // 50-800
 					obstacle_placing_check(*(p + 6), *(p + 7));
+					overwrite(*(p + 6), *(p + 7));
 				}
 			}
 			moving_car_timer++;
@@ -1012,59 +1017,31 @@ void moving_car_collision(int key)
 {
 	if (((xI >= a - 35) and xI <= (a + 50)) and ((yI >= b - 20) and yI <= (b + 36)))
 	{
-		if (key == GLUT_KEY_RIGHT)
-			xI -= speed;
-		else if (key == GLUT_KEY_LEFT)
-			xI += speed;
-		else if (key == GLUT_KEY_UP)
-			yI -= speed;
-		else if (key == GLUT_KEY_DOWN)
-			yI += speed;
-		score -= car_S_dec;
+		if ((key == GLUT_KEY_UP) or (key == GLUT_KEY_DOWN) or (key == GLUT_KEY_RIGHT) or (key == GLUT_KEY_LEFT))
+			score -= car_S_dec;
 	}
 	if (moving_car_timer >= 2)
 	{
 		if (((xI >= c - 35) and xI <= (c + 50)) and ((yI >= d - 20) and yI <= (d + 36)))
 		{
-			if (key == GLUT_KEY_RIGHT)
-				xI -= speed;
-			else if (key == GLUT_KEY_LEFT)
-				xI += speed;
-			else if (key == GLUT_KEY_UP)
-				yI -= speed;
-			else if (key == GLUT_KEY_DOWN)
-				yI += speed;
-			score -= car_S_dec;
+			if ((key == GLUT_KEY_UP) or (key == GLUT_KEY_DOWN) or (key == GLUT_KEY_RIGHT) or (key == GLUT_KEY_LEFT))
+				score -= car_S_dec;
 		}
 	}
 	if (moving_car_timer >= 4)
 	{
 		if (((xI >= e - 35) and xI <= (e + 50)) and ((yI >= f - 20) and yI <= (f + 36)))
 		{
-			if (key == GLUT_KEY_RIGHT)
-				xI -= speed;
-			else if (key == GLUT_KEY_LEFT)
-				xI += speed;
-			else if (key == GLUT_KEY_UP)
-				yI -= speed;
-			else if (key == GLUT_KEY_DOWN)
-				yI += speed;
-			score -= car_S_dec;
+			if ((key == GLUT_KEY_UP) or (key == GLUT_KEY_DOWN) or (key == GLUT_KEY_RIGHT) or (key == GLUT_KEY_LEFT))
+				score -= car_S_dec;
 		}
 	}
 	if (moving_car_timer >= 6)
 	{
 		if (((xI >= g - 35) and xI <= (g + 50)) and ((yI >= h - 20) and yI <= (h + 36)))
 		{
-			if (key == GLUT_KEY_RIGHT)
-				xI -= speed;
-			else if (key == GLUT_KEY_LEFT)
-				xI += speed;
-			else if (key == GLUT_KEY_UP)
-				yI -= speed;
-			else if (key == GLUT_KEY_DOWN)
-				yI += speed;
-			score -= car_S_dec;
+			if ((key == GLUT_KEY_UP) or (key == GLUT_KEY_DOWN) or (key == GLUT_KEY_RIGHT) or (key == GLUT_KEY_LEFT))
+				score -= car_S_dec;
 		}
 	}
 }
@@ -1298,6 +1275,34 @@ void random_placing()
 void obstacle_placing_check(int &x, int &y)
 {
 
+	// For Moving Cars
+	if ((x >= 280 and x < 410) and (y >= 175 and y <= 482))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+	}
+
+	if ((x >= 50 and x < 126) and (y >= 10 and y <= 810))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+	}
+
+	if ((x >= 470 and x < 600) and (y >= 10 and y <= 482))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+	}
+	if ((x >= 920 and x < 1050) and (y >= 400 and y <= 640))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+	}
+
 	//	For walls
 	if ((x >= 60 and x <= 330) and (y >= 620 and y <= 780))
 	{
@@ -1398,6 +1403,68 @@ void obstacle_placing_check(int &x, int &y)
 	}
 }
 
+void overwrite(int &x, int &y)
+{
+	// For Blocks
+	if (((x >= arr[0] - 60) and x <= (arr[0] + 60)) and ((y >= arr[1] - 60) and y <= (arr[1] + 80)))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+		overwrite(x, y);
+	}
+	if (((x >= arr[2] - 60) and x <= (arr[2] + 60)) and ((y >= arr[3] - 60) and y <= (arr[3] + 80)))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+		overwrite(x, y);
+	}
+	if (((x >= arr[4] - 60) and x <= (arr[4] + 60)) and ((y >= arr[5] - 60) and y <= (arr[5] + 80)))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+		overwrite(x, y);
+	}
+	if (((x >= arr[6] - 60) and x <= (arr[6] + 60)) and ((y >= arr[7] - 60) and y <= (arr[7] + 80)))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+		overwrite(x, y);
+	}
+	// For Trees
+	if (((x >= arr[8] - 60) and x <= (arr[8] + 60)) and ((y >= arr[9] - 80) and y <= (arr[9] + 100)))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+		overwrite(x, y);
+	}
+	if (((x >= arr[10] - 60) and x <= (arr[10] + 60)) and ((y >= arr[11] - 80) and y <= (arr[11] + 100)))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+		overwrite(x, y);
+	}
+	if (((x >= arr[12] - 60) and x <= (arr[12] + 60)) and ((y >= arr[13] - 80) and y <= (arr[13] + 100)))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+		overwrite(x, y);
+	}
+	if (((x >= arr[14] - 60) and x <= (arr[14] + 60)) and ((y >= arr[15] - 80) and y <= (arr[15] + 100)))
+	{
+		x = (rand() % 1200) + 50;
+		y = (rand() % 750) + 50;
+		obstacle_placing_check(x, y);
+		overwrite(x, y);
+	}
+}
+
 void menu()
 {
 	glClearColor(255 /*Red Component*/, 255,					 // 148.0/255/*Green Component*/,
@@ -1438,29 +1505,6 @@ void menu_2()
 	glutPostRedisplay();
 }
 
-void game_end()
-{
-	glClearColor(255 /*Red Component*/, 255,					 // 148.0/255/*Green Component*/,
-				 255 /*Blue Component*/, 0 /*Alpha component*/); // Red==Green==Blue==1 --> White Colour
-	glClear(GL_COLOR_BUFFER_BIT);
-	DrawLine(0, 0, 0, 940, 10, colors[BLUE]);
-	DrawLine(0, 860, 1280, 860, 10, colors[BLUE]);
-	DrawLine(1280, 0, 1280, 940, 10, colors[BLUE]);
-	DrawLine(0, 0, 1280, 0, 10, colors[BLUE]);
-	DrawLine(0, 936, 1280, 936, 10, colors[BLUE]);
-
-	DrawString(540, 890, "GAME END.", colors[BLUE]);
-	DrawString(540, 600, "Name:   " + user_name, colors[DEEP_SKY_BLUE]);
-	DrawString(540, 520, "Score:   " + to_string(score), colors[DEEP_SKY_BLUE]);
-	if (score == 100)
-	{
-		DrawString(540, 690, "YOU WON.", colors[(rand() % 139) + 1]);
-	}
-
-	glutSwapBuffers(); // do not modify this line..
-	glutPostRedisplay();
-}
-
 void display_score()
 {
 
@@ -1491,7 +1535,7 @@ void display_score()
 		{
 			getline(fin, name, ',');
 			fin >> s;
-			stored_num++;
+			++stored_num;
 		}
 		fin.close();
 
@@ -1564,80 +1608,76 @@ void write_score()
 			stored_num++;
 		}
 		fin.close();
-	}
 
-	else
-	{
-		// For creating file for the first time.
-		fout.open("leader_board.txt");
-		fout.close();
-	}
-
-	//
-	if (stored_num < 10)
-	{
-		fout.open("leader_board.txt", ios::app);
-		if (fout)
+		if (stored_num >= 0 and stored_num < 10)
 		{
-			if (stored_num > 0) // for the firrst time we do not want to put a line.
+			fout.open("leader_board.txt", ios::app);
+			if (fout)
 			{
-				fout << endl;
-			}
-			fout << user_name << "," << score;
-		}
-		fout.close();
-	}
-	if (stored_num == 10) // Means stored scores are more than or equal to 10.
-	{
-		int arr_s[stored_num];
-		string arr_n[stored_num];
-
-		int i = 0;
-		fin.open("leader_board.txt");
-		while (!fin.eof())
-		{
-			getline(fin, arr_n[i], ',');
-			fin >> arr_s[i];
-			i++;
-		}
-		fin.close();
-
-		// Finding smaller value
-		int min = arr_s[0];
-		for (int i = 0; i < stored_num; i++)
-		{
-			if (arr_s[i] < min)
-			{
-				min = arr_s[i];
+				if (name != "")
+					fout << endl;
+				fout << user_name << "," << score;
+				fout.close();
 			}
 		}
-
-		// Finding smaller element
-		int element = 0;
-		while (element < 10)
+		if (stored_num == 10) // Means stored scores are more than or equal to 10.
 		{
-			if (arr_s[element] == min)
+			int arr_s[stored_num];
+			string arr_n[stored_num];
+
+			int i = 0;
+			fin.open("leader_board.txt");
+			while (!fin.eof())
 			{
-				break;
+				getline(fin, arr_n[i], ',');
+				fin >> arr_s[i];
+				i++;
 			}
-			element++;
-		}
+			fin.close();
 
-		if (score >= min)
-		{
-			arr_s[element] = score;
-			arr_n[element] = "\n" + user_name; // for a newline
-		}
-		// else score will be less than the stored elements which will be discarded.
+			// Finding smaller value
+			int min = arr_s[0];
+			for (int i = 0; i < stored_num; i++)
+			{
+				if (arr_s[i] < min)
+				{
+					min = arr_s[i];
+				}
+			}
 
-		ofstream fout;
-		fout.open("leader_board.txt");
-		if (fout)
-		{
+			// Finding smaller element
+			int element = 0;
+			while (element < 10)
+			{
+				if (arr_s[element] == min)
+				{
+					break;
+				}
+				element++;
+			}
+
+			if (score >= min)
+			{
+				arr_s[element] = score;
+				arr_n[element] = "\n" + user_name; // for a newline
+			}
+			// else score will be less than the stored elements which will be discarded.
+
+			ofstream fout;
+			fout.open("leader_board.txt");
+
 			for (int i = 0; i < 10; i++)
 			{
 				fout << arr_n[i] << "," << arr_s[i];
 			}
 		}
 	}
+	else
+	{
+		// For creating file for the first time.
+		fout.open("leader_board.txt");
+		fout << user_name << "," << score;
+		fout.close();
+	}
+	exit(1);
 }
